@@ -5,3 +5,4 @@ Dự án : Xây dựng ứng dụng web quản lý hoạt động và minh chứ
 ## Thành viên nhóm
 
 1. **Nguyễn Trung Hiếu** - Trưởng nhóm
+2. **Nguyễn Trung Hiếu-study** - Thành viên
