@@ -1,6 +1,6 @@
-const test = require('node:test');
-const assert = require('node:assert');
-const { isValidEmail, formatDate, calculateRemainingCapacity } = require('../server/utils');
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { isValidEmail, formatDate, calculateRemainingCapacity } from '../server/utils.js';
 
 test('Kiểm tra hàm isValidEmail', async (t) => {
   await t.test('Trả về true khi email hợp lệ', () => {
@@ -29,7 +29,6 @@ test('Kiểm tra hàm formatDate', async (t) => {
 
 test('Kiểm tra hàm calculateRemainingCapacity', async (t) => {
   await t.test('Tính đúng số chỗ còn lại', () => {
-    // Sức chứa 30, đã đăng ký 10 -> còn lại 20
     assert.strictEqual(calculateRemainingCapacity(30, 10), 20);
   });
 
@@ -38,4 +37,3 @@ test('Kiểm tra hàm calculateRemainingCapacity', async (t) => {
     assert.strictEqual(calculateRemainingCapacity(30, 35), 0);
   });
 });
-

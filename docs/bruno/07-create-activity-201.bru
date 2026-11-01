@@ -1,0 +1,31 @@
+meta {
+  name: 07. Tao hoat dong 201
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/activities
+  body: json
+  auth: none
+}
+
+headers {
+  X-User-Id: 1
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "title": "Hoi thao cong nghe",
+  "description": "Mo ta",
+  "location": "Lab 2",
+  "start_at": "2026-11-20 08:00:00",
+  "end_at": "2026-11-20 11:00:00",
+  "capacity": 40
+}
+}
+
+assert {
+  res.status: eq 201
+}

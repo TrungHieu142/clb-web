@@ -1,0 +1,15 @@
+meta {
+  name: 05. Chi tiet hoat dong 200
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/activities/1
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}

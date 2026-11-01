@@ -1,0 +1,15 @@
+meta {
+  name: 18. API khong ton tai 404
+  type: http
+  seq: 18
+}
+
+get {
+  url: {{baseUrl}}/api/khong-ton-tai
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 404
+}

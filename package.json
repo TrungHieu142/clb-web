@@ -2,14 +2,16 @@
   "name": "clb-web",
   "version": "1.0.0",
   "description": "Dự án : Xây dựng ứng dụng web quản lý hoạt động và minh chứng tham gia cho câu lạc bộ sinh viên.",
-  "main": "index.js",
+  "main": "server/server.js",
+  "type": "module",
   "directories": {
     "doc": "docs",
     "test": "test"
   },
   "scripts": {
-    "start": "node server/server.js",
-    "test": "node --test"
+    "start": "node --env-file=.env server/server.js",
+    "test": "node --env-file=.env.test db/reset.js && node --env-file=.env.test --test",
+    "db:reset": "node --env-file=.env db/reset.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +20,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/TrungHieu142/clb-web/issues"
   },

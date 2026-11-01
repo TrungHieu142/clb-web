@@ -1,0 +1,25 @@
+meta {
+  name: 09. Cap nhat hoat dong 200
+  type: http
+  seq: 9
+}
+
+patch {
+  url: {{baseUrl}}/api/activities/1
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+{
+  "title": "Hoat dong 1 moi"
+}
+}
+
+assert {
+  res.status: eq 200
+}
