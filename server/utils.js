@@ -1,17 +1,14 @@
 /**
- * Các hàm tiện ích dùng chung cho hệ thống clb-web
+ * Các hàm tiện ích dùng chung cho hệ thống clb-web (ESM)
  */
 
-// 1. Kiểm tra email có đúng định dạng không
-function isValidEmail(email) {
+export function isValidEmail(email) {
   if (!email || typeof email !== 'string') return false;
-  // Kiểm tra có ký tự @ và có dấu chấm tên miền
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email.trim());
 }
 
-// 2. Định dạng ngày giờ chuẩn hiển thị tiếng Việt (DD/MM/YYYY)
-function formatDate(dateInput) {
+export function formatDate(dateInput) {
   if (!dateInput) return '';
   const d = new Date(dateInput);
   if (isNaN(d.getTime())) return '';
@@ -22,17 +19,9 @@ function formatDate(dateInput) {
   return `${day}/${month}/${year}`;
 }
 
-// 3. Tính số chỗ còn trống của hoạt động
-function calculateRemainingCapacity(totalCapacity, registeredCount) {
+export function calculateRemainingCapacity(totalCapacity, registeredCount) {
   const total = Number(totalCapacity) || 0;
   const registered = Number(registeredCount) || 0;
   const remaining = total - registered;
   return remaining > 0 ? remaining : 0;
 }
-
-module.exports = {
-  isValidEmail,
-  formatDate,
-  calculateRemainingCapacity
-};
-
