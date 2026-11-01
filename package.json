@@ -1,0 +1,31 @@
+{
+  "name": "clb-web",
+  "version": "1.0.0",
+  "description": "Dự án : Xây dựng ứng dụng web quản lý hoạt động và minh chứng tham gia cho câu lạc bộ sinh viên.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "node --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TrungHieu142/clb-web.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/TrungHieu142/clb-web/issues"
+  },
+  "homepage": "https://github.com/TrungHieu142/clb-web#readme",
+  "dependencies": {
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "mysql2": "^3.24.6"
+  }
+}
