@@ -1,22 +1,32 @@
-const form = document.querySelector('#login');
-const err = document.querySelector('#err');
-const selectUser = document.querySelector('#userId');
+import { api } from './api.js';
+import { clear, showError } from './ui.js';
 
-// Khởi tạo giá trị userId từ localStorage nếu có
-const savedUserId = localStorage.getItem('userId');
-if (savedUserId && selectUser) {
-  selectUser.value = savedUserId;
-}
+const form = document.querySelector('#login-form');
+const msg = document.querySelector('#msg');
+const btn = document.querySelector('#submit-btn');
 
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  
-  // Lưu userId giả lập vào localStorage cho tuần 4
-  const chosenId = selectUser.value;
-  localStorage.setItem('userId', chosenId);
+  clear(msg);
 
-  err.style.display = 'block';
-  err.className = 'msg';
-  err.textContent = `Đã lưu danh tính người dùng ID = ${chosenId}. Tính năng xác thực mật khẩu qua JWT sẽ được kích hoạt ở Tuần 5!`;
+  btn.disabled = true;
+  btn.textContent = 'Đang xác thực...';
+
+  try {
+    const data = await api('POST', '/api/auth/login', {
+      email: form.email.value.trim(),
+      password: form.password.value
+    });
+
+    // Lưu token và thông tin người dùng vào localStorage
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+
+    // Đăng nhập thành công -> về trang chủ
+    location.href = '/';
+  } catch (err) {
+    showError(msg, err.message);
+    btn.disabled = false;
+    btn.textContent = 'Đăng nhập';
+  }
 });
-

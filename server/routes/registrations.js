@@ -1,10 +1,9 @@
 import { pool } from '../db.js';
 import { HttpError, sendJson } from '../http-utils.js';
 
-export async function register(req, res, { params }) {
+export async function register(req, res, { params, user }) {
   const activityId = Number(params[0]);
-  const userId = Number(req.headers['x-user-id']);
-  if (!userId) throw new HttpError(401, 'Thiếu thông tin người dùng');
+  const userId = user.id;
 
   const conn = await pool.getConnection();
   try {
@@ -41,10 +40,9 @@ export async function register(req, res, { params }) {
   }
 }
 
-export async function cancel(req, res, { params }) {
+export async function cancel(req, res, { params, user }) {
   const activityId = Number(params[0]);
-  const userId = Number(req.headers['x-user-id']);
-  if (!userId) throw new HttpError(401, 'Thiếu thông tin người dùng');
+  const userId = user.id;
 
   const [r] = await pool.query(
     'DELETE FROM registrations WHERE activity_id = ? AND user_id = ?',
@@ -66,4 +64,3 @@ export async function listByActivity(req, res, { params }) {
   );
   sendJson(res, 200, rows);
 }
-

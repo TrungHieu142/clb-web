@@ -28,27 +28,35 @@ export async function list(req, res, { url }) {
   sendJson(res, 200, { items, total, page, limit });
 }
 
-export async function get(req, res, { params }) {
-  const userId = Number(req.headers['x-user-id']) || 0;
+export async function get(req, res, { params, user }) {
+  const userId = user?.id || 0;
   const [rows] = await pool.query(
     `SELECT a.*, COUNT(r.id) AS registered,
-            SUM(CASE WHEN r.user_id = ? THEN 1 ELSE 0 END) > 0 AS registered_by_me
+            SUM(CASE WHEN r.user_id = ? THEN 1 ELSE 0 END) > 0 AS registered_by_me,
+            (SELECT e.status FROM registrations reg 
+             JOIN evidences e ON e.registration_id = reg.id 
+             WHERE reg.activity_id = a.id AND reg.user_id = ? 
+             ORDER BY e.created_at DESC LIMIT 1) AS evidence_status,
+            (SELECT e.id FROM registrations reg 
+             JOIN evidences e ON e.registration_id = reg.id 
+             WHERE reg.activity_id = a.id AND reg.user_id = ? 
+             ORDER BY e.created_at DESC LIMIT 1) AS evidence_id
      FROM activities a
      LEFT JOIN registrations r ON r.activity_id = a.id
      WHERE a.id = ?
      GROUP BY a.id`,
-    [userId, params[0]]
+    [userId, userId, userId, params[0]]
   );
   if (rows.length === 0) throw new HttpError(404, 'Không tìm thấy hoạt động');
   sendJson(res, 200, rows[0]);
 }
 
-export async function create(req, res) {
+export async function create(req, res, { user }) {
   const body = await readJson(req);
   const errors = validateActivity(body);
   if (errors.length) throw new HttpError(400, errors.join('; '));
 
-  const userId = Number(req.headers['x-user-id']) || 1;
+  const userId = user.id;
   const [r] = await pool.query(
     `INSERT INTO activities (title, description, location, start_at, end_at, capacity, created_by)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,

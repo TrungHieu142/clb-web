@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Duyệt Minh chứng - CLB Web</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="/">Hoạt động</a>
+    <a href="/admin.html" id="nav-admin">Quản trị</a>
+    <a href="/evidences.html" id="nav-evidences" style="color: var(--color-danger); font-weight: bold;">Duyệt minh chứng</a>
+  </header>
+
+  <main>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+      <h1>Danh sách Minh chứng Chờ duyệt</h1>
+      <div>
+        <label for="filter-status" style="font-weight: 600; margin-right: 0.5rem;">Trạng thái:</label>
+        <select id="filter-status" style="padding: 0.4rem; border-radius: var(--radius); border: 1px solid #ccc;">
+          <option value="PENDING" selected>⏳ Chờ duyệt (PENDING)</option>
+          <option value="APPROVED">✅ Đã duyệt (APPROVED)</option>
+          <option value="REJECTED">❌ Bị từ chối (REJECTED)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Người nộp</th>
+            <th>Hoạt động</th>
+            <th>Thời gian nộp</th>
+            <th>Tập tin</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+        <tbody id="evidence-tbody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script type="module" src="/js/nav.js"></script>
+  <script type="module" src="/js/evidences.js"></script>
+</body>
+</html>
+
