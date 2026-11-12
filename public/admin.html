@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản trị Hoạt động - CLB Web</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="/">Hoạt động</a>
+    <a href="/admin.html" id="nav-admin" style="color: var(--color-danger);">Quản trị</a>
+    <a href="/login.html">Đăng nhập</a>
+  </header>
+
+  <main>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+      <h1>Quản lý Hoạt động CLB</h1>
+      <a href="/admin-edit.html" class="btn">+ Tạo hoạt động mới</a>
+    </div>
+
+    <div id="table-container">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Tên hoạt động</th>
+              <th>Thời gian bắt đầu</th>
+              <th>Địa điểm</th>
+              <th>Đăng ký</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Hộp modal xem danh sách người đăng ký -->
+    <div id="registrations-modal" style="display: none; margin-top: 2rem;" class="form-card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 id="modal-title" style="margin: 0;">Danh sách người đăng ký</h3>
+        <button id="close-modal-btn" class="btn btn--secondary" style="padding: 0.3rem 0.6rem;">Đóng</button>
+      </div>
+      <div id="registrations-list" style="margin-top: 1rem;"></div>
+    </div>
+  </main>
+
+  <script type="module" src="/js/admin.js"></script>
+</body>
+</html>
+

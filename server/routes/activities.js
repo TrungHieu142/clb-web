@@ -29,13 +29,15 @@ export async function list(req, res, { url }) {
 }
 
 export async function get(req, res, { params }) {
+  const userId = Number(req.headers['x-user-id']) || 0;
   const [rows] = await pool.query(
-    `SELECT a.*, COUNT(r.id) AS registered
+    `SELECT a.*, COUNT(r.id) AS registered,
+            SUM(CASE WHEN r.user_id = ? THEN 1 ELSE 0 END) > 0 AS registered_by_me
      FROM activities a
      LEFT JOIN registrations r ON r.activity_id = a.id
      WHERE a.id = ?
      GROUP BY a.id`,
-    [params[0]]
+    [userId, params[0]]
   );
   if (rows.length === 0) throw new HttpError(404, 'Không tìm thấy hoạt động');
   sendJson(res, 200, rows[0]);
@@ -80,4 +82,3 @@ export async function remove(req, res, { params }) {
   if (r.affectedRows === 0) throw new HttpError(404, 'Không tìm thấy hoạt động để xoá');
   sendJson(res, 204);
 }
-

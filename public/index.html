@@ -3,92 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CLB Web - Quản lý Hoạt động</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding-top: 60px;
-      background-color: #f0f2f5;
-      margin: 0;
-    }
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      display: inline-block;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-      min-width: 360px;
-    }
-    h1 {
-      color: #1a73e8;
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-    .status-box {
-      margin: 15px 0;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: left;
-      background-color: #fafafa;
-      border: 1px solid #e0e0e0;
-    }
-    .status-label {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 4px;
-    }
-    .status-value {
-      font-size: 18px;
-      font-weight: bold;
-    }
-    .ok { color: #2e7d32; }
-    .error { color: #d32f2f; }
-  </style>
+  <title>CLB Web - Hoạt động Câu lạc bộ</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="card">
-    <h1>Hệ thống CLB Web</h1>
+  <header class="site-header">
+    <a href="/">Hoạt động</a>
+    <a href="/admin.html" id="nav-admin">Quản trị</a>
+    <a href="/login.html">Đăng nhập</a>
+  </header>
 
-    <div class="status-box">
-      <div class="status-label">Trạng thái Server:</div>
-      <div id="server-status" class="status-value">Đang kiểm tra...</div>
-    </div>
+  <main>
+    <h1>Danh sách Hoạt động CLB</h1>
 
-    <div class="status-box">
-      <div class="status-label">Trạng thái Cơ sở dữ liệu (Database):</div>
-      <div id="db-status" class="status-value">Đang kiểm tra...</div>
-      <div id="db-detail" style="font-size: 12px; color: #888; margin-top: 4px;"></div>
-    </div>
-  </div>
+    <form id="search" class="search-form">
+      <input type="text" name="q" placeholder="Tìm kiếm hoạt động theo tên...">
+      <button type="submit" class="btn">Tìm kiếm</button>
+    </form>
 
-  <script>
-    fetch('/api/health')
-      .then(response => response.json())
-      .then(data => {
-        // Hiển thị trạng thái server
-        const serverEl = document.getElementById('server-status');
-        serverEl.innerText = `Server: ${data.server}`;
-        serverEl.className = 'status-value ok';
+    <section id="list" class="cards"></section>
+    <nav id="pager" class="pager"></nav>
+  </main>
 
-        // Hiển thị trạng thái database
-        const dbEl = document.getElementById('db-status');
-        const dbDetail = document.getElementById('db-detail');
-
-        if (data.database.status === 'ok') {
-          dbEl.innerText = 'Database: Đã kết nối thành công';
-          dbEl.className = 'status-value ok';
-          dbDetail.innerText = data.database.message;
-        } else {
-          dbEl.innerText = 'Database: Lỗi kết nối!';
-          dbEl.className = 'status-value error';
-          dbDetail.innerText = data.database.message;
-        }
-      })
-      .catch(error => {
-        document.getElementById('server-status').innerText = 'Không thể kết nối đến server';
-        document.getElementById('server-status').className = 'status-value error';
-      });
-  </script>
+  <script type="module" src="/js/index.js"></script>
 </body>
 </html>
