@@ -1,175 +1,90 @@
-# Tài liệu API Hệ thống CLB Web (Tuần 3)
+# Tài liệu API Hệ thống CLB Web (Cập nhật Tuần 5)
 
-Tất cả request và response đều định dạng JSON với mã hoá UTF-8.
+Tất cả request và response đều định dạng JSON với mã hoá UTF-8 (ngoại trừ nộp minh chứng gửi multipart/form-data và tải file).
+
+Tất cả API (ngoại trừ Health check và Login) đều yêu cầu Header:
+```http
+Authorization: Bearer <token_jwt>
+```
 
 ---
 
-## 1. Kiểm tra hệ thống (Health Check)
+## 1. Xác thực & Tài khoản (Authentication)
 
-### `GET /api/health`
-Kiểm tra trạng thái hoạt động của server.
-- **Header**: Không yêu cầu
-- **Phản hồi thành công (200 OK)**:
+### `POST /api/auth/login` (Công khai)
+Đăng nhập tài khoản bằng email và mật khẩu (Mật khẩu được đối chiếu bằng `bcryptjs`).
+- **Body**:
   ```json
   {
-    "status": "ok"
+    "email": "admin@clb.test",
+    "password": "123456"
   }
   ```
+- **Phản hồi 200 OK**:
+  ```json
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": 1,
+      "email": "admin@clb.test",
+      "full_name": "Quản trị CLB",
+      "role": "ADMIN"
+    }
+  }
+  ```
+- **Mã lỗi**: `400` thiếu dữ liệu, `401` email hoặc mật khẩu không đúng.
+
+### `GET /api/auth/me`
+Lấy thông tin tài khoản hiện tại từ Token.
+- **Phản hồi 200 OK**: Trả về thông tin người dùng (không chứa trường nhạy cảm `password_hash`).
 
 ---
 
 ## 2. Quản lý Hoạt động (Activities)
 
-### `GET /api/activities`
-Lấy danh sách hoạt động có tìm kiếm theo tên và phân trang.
-- **Query params**:
-  - `q`: Từ khoá tìm kiếm theo tên hoạt động (mặc định: `""`)
-  - `page`: Trang hiện tại (mặc định: `1`)
-  - `limit`: Số lượng bản ghi mỗi trang (mặc định: `10`, tối đa `50`)
-- **Phản hồi thành công (200 OK)**:
-  ```json
-  {
-    "items": [
-      {
-        "id": 1,
-        "title": "Hoạt động số 1",
-        "description": "Mô tả mẫu",
-        "location": "Hội trường A",
-        "start_at": "2026-11-02 08:00:00",
-        "end_at": "2026-11-02 11:00:00",
-        "capacity": 21,
-        "registered": 0
-      }
-    ],
-    "total": 12,
-    "page": 1,
-    "limit": 10
-  }
-  ```
+- `GET /api/activities`: Lấy danh sách hoạt động có tìm kiếm và phân trang (Yêu cầu đăng nhập).
+- `GET /api/activities/:id`: Xem chi tiết hoạt động (kèm thông tin `registered_by_me` và trạng thái minh chứng `evidence_status`).
+- `POST /api/activities`: Tạo hoạt động mới (Chỉ `ADMIN`, vi phạm nhận `403 Forbidden`).
+- `PATCH /api/activities/:id`: Sửa một phần hoạt động (Chỉ `ADMIN`).
+- `DELETE /api/activities/:id`: Xoá hoạt động (Chỉ `ADMIN`).
 
 ---
 
-### `GET /api/activities/:id`
-Lấy thông tin chi tiết một hoạt động theo mã ID.
-- **Tham số URL**: `id` (mã hoạt động)
-- **Phản hồi thành công (200 OK)**:
+## 3. Đăng ký Hoạt động (Registrations)
+
+- `POST /api/activities/:id/registrations`: Đăng ký tham gia (Dùng transaction `FOR UPDATE` chống hết chỗ và chống trùng 409).
+- `DELETE /api/activities/:id/registrations/me`: Huỷ đăng ký của chính mình (Chống IDOR).
+- `GET /api/activities/:id/registrations`: Danh sách người đăng ký hoạt động (Chỉ `ADMIN`).
+
+---
+
+## 4. Minh chứng Tham gia (Evidences) - Mới Tuần 5
+
+### `POST /api/activities/:id/evidences`
+Thành viên nộp minh chứng cho hoạt động mình đã đăng ký.
+- **Content-Type**: `multipart/form-data`
+- **Body**: trường `file` (ảnh JPG, PNG hoặc PDF, tối đa 5 MB).
+- **Phản hồi 201 Created**:
   ```json
   {
     "id": 1,
-    "title": "Hoạt động số 1",
-    "description": "Mô tả mẫu",
-    "location": "Hội trường A",
-    "start_at": "2026-11-02 08:00:00",
-    "end_at": "2026-11-02 11:00:00",
-    "capacity": 21,
-    "created_by": 1,
-    "created_at": "2026-11-01 13:30:00",
-    "registered": 0
+    "status": "PENDING",
+    "message": "Nộp minh chứng thành công, đang chờ quản trị viên duyệt"
   }
   ```
-- **Mã lỗi**:
-  - `404 Not Found`: `{ "error": "Không tìm thấy hoạt động" }`
+- **Mã lỗi**: `403` chưa đăng ký hoạt động này, `400` file sai định dạng hoặc > 5 MB.
 
----
+### `GET /api/evidences?status=PENDING`
+Quản trị viên xem danh sách minh chứng cần duyệt.
+- **Quyền**: Chỉ `ADMIN` (`MEMBER` nhận `403 Forbidden`).
+- **Phản hồi 200 OK**: Danh sách minh chứng gồm tên người nộp, email, tên hoạt động, ngày nộp.
 
-### `POST /api/activities`
-Tạo mới một hoạt động (Dành cho Quản trị viên).
-- **Header**:
-  - `Content-Type: application/json`
-  - `X-User-Id: <id-quan-tri>`
-- **Body mẫu**:
-  ```json
-  {
-    "title": "Hội thảo Lập trình Web với Node.js",
-    "description": "Hướng dẫn thực chiến cho thành viên CLB",
-    "location": "Phòng Hội thảo B",
-    "start_at": "2026-11-15 08:00:00",
-    "end_at": "2026-11-15 11:30:00",
-    "capacity": 50
-  }
-  ```
-- **Phản hồi thành công (201 Created)**:
-  ```json
-  {
-    "id": 13
-  }
-  ```
-- **Mã lỗi**:
-  - `400 Bad Request`: Dữ liệu không hợp lệ (tên quá ngắn, sức chứa sai, ngày kết thúc trước ngày bắt đầu).
+### `PATCH /api/evidences/:id`
+Quản trị viên duyệt hoặc từ chối minh chứng.
+- **Quyền**: Chỉ `ADMIN`.
+- **Body**: `{ "status": "APPROVED" | "REJECTED" }`.
+- **Phản hồi 200 OK**: Cập nhật `reviewed_by` và `reviewed_at`.
 
----
-
-### `PATCH /api/activities/:id`
-Cập nhật một hoặc nhiều thông tin của hoạt động.
-- **Header**: `Content-Type: application/json`
-- **Body mẫu**:
-  ```json
-  {
-    "title": "Tên hoạt động đã sửa",
-    "capacity": 60
-  }
-  ```
-- **Phản hồi thành công (200 OK)**:
-  ```json
-  {
-    "message": "Cập nhật thành công"
-  }
-  ```
-- **Mã lỗi**:
-  - `400 Bad Request`: Không có trường hợp lệ hoặc dữ liệu sai.
-  - `404 Not Found`: Không tìm thấy hoạt động để sửa.
-
----
-
-### `DELETE /api/activities/:id`
-Xoá một hoạt động (các đăng ký liên quan sẽ tự động bị xoá theo CASCADE).
-- **Phản hồi thành công (204 No Content)**: Trả về thân rỗng.
-- **Mã lỗi**:
-  - `404 Not Found`: `{ "error": "Không tìm thấy hoạt động để xoá" }`
-
----
-
-## 3. Đăng ký tham gia (Registrations)
-
-### `POST /api/activities/:id/registrations`
-Đăng ký tham gia hoạt động (Xử lý an toàn đồng thời bằng Transaction và khóa dòng `FOR UPDATE`).
-- **Header**: `X-User-Id: <id-thanh-vien>`
-- **Phản hồi thành công (201 Created)**:
-  ```json
-  {
-    "registered": 5,
-    "capacity": 20
-  }
-  ```
-- **Mã lỗi**:
-  - `401 Unauthorized`: Thiếu header `X-User-Id`.
-  - `404 Not Found`: Không tìm thấy hoạt động.
-  - `409 Conflict`: Hoạt động đã hết chỗ HOẶC người dùng đã đăng ký trước đó.
-
----
-
-### `DELETE /api/activities/:id/registrations/me`
-Huỷ lượt đăng ký của chính người dùng hiện tại.
-- **Header**: `X-User-Id: <id-thanh-vien>`
-- **Phản hồi thành công (204 No Content)**: Trả về thân rỗng.
-- **Mã lỗi**:
-  - `401 Unauthorized`: Thiếu header `X-User-Id`.
-  - `404 Not Found`: Bạn chưa đăng ký hoạt động này.
-
----
-
-### `GET /api/activities/:id/registrations`
-Xem danh sách những người đã đăng ký hoạt động (Dành cho Quản trị viên).
-- **Phản hồi thành công (200 OK)**:
-  ```json
-  [
-    {
-      "id": 1,
-      "user_id": 2,
-      "full_name": "Thành viên 1",
-      "email": "member1@clb.test",
-      "created_at": "2026-11-01 14:00:00"
-    }
-  ]
-  ```
-
+### `GET /api/evidences/:id/file`
+Tải xem file minh chứng an toàn.
+- **Quyền**: Chỉ Quản trị viên (`ADMIN`) hoặc chính Thành viên nộp file đó. Người khác truy cập nhận `403 Forbidden` (Chống rò rỉ dữ liệu IDOR).

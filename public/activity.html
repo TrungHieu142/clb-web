@@ -9,16 +9,30 @@
 <body>
   <header class="site-header">
     <a href="/">Hoạt động</a>
-    <a href="/admin.html" id="nav-admin">Quản trị</a>
-    <a href="/login.html">Đăng nhập</a>
+    <a href="/admin.html" id="nav-admin" style="display: none;">Quản trị</a>
+    <a href="/evidences.html" id="nav-evidences" style="display: none;">Duyệt minh chứng</a>
   </header>
 
   <main>
     <p><a href="/" style="color: var(--color-primary); text-decoration: none;">← Quay lại danh sách</a></p>
     <article id="detail" class="form-card" style="max-width: 680px;"></article>
+
+    <!-- Khung nộp minh chứng tham gia hoạt động (Tuần 5) -->
+    <section id="evidence-section" class="form-card" style="max-width: 680px; margin-top: 1.5rem; display: none;">
+      <h3>Minh chứng tham gia hoạt động</h3>
+      <div id="evidence-status-box" style="margin-bottom: 1rem;"></div>
+
+      <form id="evidence-form">
+        <div class="form-group">
+          <label for="evidence-file">Tải lên ảnh minh chứng hoặc PDF (tối đa 5 MB):</label>
+          <input type="file" id="evidence-file" name="file" accept=".jpg,.jpeg,.png,.pdf" required>
+        </div>
+        <button type="submit" id="evidence-submit-btn" class="btn">Gửi minh chứng</button>
+      </form>
+    </section>
   </main>
 
+  <script type="module" src="/js/nav.js"></script>
   <script type="module" src="/js/activity.js"></script>
 </body>
 </html>
-

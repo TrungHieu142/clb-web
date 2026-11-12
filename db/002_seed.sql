@@ -1,8 +1,8 @@
 INSERT INTO users (email, full_name, password_hash, role)
-VALUES ('admin@clb.test', 'Quản trị CLB', 'TAM_THOI', 'ADMIN');
+VALUES ('admin@clb.test', 'Quản trị CLB', '$2b$10$uPphlyenXMxOkp6xkNb7l.m3vDFDSC3ybQnMWi0OvTvB9h49hhU4y', 'ADMIN');
 
 INSERT INTO users (email, full_name, password_hash, role)
-SELECT CONCAT('member', seq, '@clb.test'), CONCAT('Thành viên ', seq), 'TAM_THOI', 'MEMBER'
+SELECT CONCAT('member', seq, '@clb.test'), CONCAT('Thành viên ', seq), '$2b$10$uPphlyenXMxOkp6xkNb7l.m3vDFDSC3ybQnMWi0OvTvB9h49hhU4y', 'MEMBER'
 FROM seq_1_to_20;
 
 INSERT INTO activities (title, description, location, start_at, end_at, capacity, created_by)
