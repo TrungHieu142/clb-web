@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập - CLB Web</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="/">Hoạt động</a>
+    <a href="/admin.html" id="nav-admin">Quản trị</a>
+    <a href="/login.html" style="font-weight: bold;">Đăng nhập</a>
+  </header>
+
+  <main>
+    <div class="form-card" style="max-width: 420px; margin-top: 2rem;">
+      <h2 style="text-align: center;">Đăng nhập Hệ thống</h2>
+      <p id="err" class="msg msg--error" style="display: none;"></p>
+
+      <form id="login">
+        <div class="form-group">
+          <label for="email">Địa chỉ Email</label>
+          <input type="email" id="email" name="email" required placeholder="nhap-email@clb.test" value="member1@clb.test">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <input type="password" id="password" name="password" required placeholder="••••••••" value="123456">
+        </div>
+
+        <!-- Tiện ích giả lập đổi User ID cho Tuần 4 -->
+        <div class="form-group" style="background: #eef3f8; padding: 0.8rem; border-radius: var(--radius);">
+          <label for="userId" style="font-size: 0.85rem; color: var(--color-primary);">Giả lập ID Người dùng (Tuần 4 test):</label>
+          <select id="userId" name="userId" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc;">
+            <option value="2">User 2 (Thành viên 1)</option>
+            <option value="3">User 3 (Thành viên 2)</option>
+            <option value="4">User 4 (Thành viên 3)</option>
+            <option value="1">User 1 (Quản trị viên)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">Đăng nhập</button>
+      </form>
+    </div>
+  </main>
+
+  <script type="module" src="/js/login.js"></script>
+</body>
+</html>
+
